@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Warehouse {
 
@@ -27,6 +28,11 @@ public class Warehouse {
         return instance;
     }
 
+    //Metod för att skapa en instans utan namn
+    public static Warehouse getInstance() {
+        return getInstance("Default Warehouse");
+    }
+
     public boolean isEmpty() {
         return products.isEmpty();
     }
@@ -35,7 +41,7 @@ public class Warehouse {
         return new ArrayList<>(products);
     }
 
-    public void addProduct(UUID id, String name, Category category, BigDecimal price) {
+    public ProductRecord addProduct(UUID id, String name, Category category, BigDecimal price) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Product name can't be null or empty.");
         }
@@ -46,13 +52,25 @@ public class Warehouse {
         if (price == null) {
             price = BigDecimal.ZERO;
         }
-        if (id == null) {
-            id = UUID.randomUUID();
+
+        // Skapa en lokal variabel för att undvika "Variable used in lambda expression should be final or effectively final"
+        UUID productId = id;
+        // Kontrollera om produkten redan finns med samma ID
+        if (products.stream().anyMatch(product -> product.uuid().equals(productId))) {
+            throw new IllegalArgumentException("Product with that id already exists, use updateProduct for updates.");
         }
 
         ProductRecord productRecord = new ProductRecord(id, name, category, price);
         products.add(productRecord); // Lägg till produkten i listan
+        return productRecord; // Returnera den tillagda produkten
     }
+
+    public List<ProductRecord> getProductById(UUID id) {
+        return products.stream()
+                .filter(product -> product.uuid().equals(id))
+                .collect(Collectors.toList());
+    }
+
 
     // Getter för att hämta namnet på lagret
     public String getName() {
