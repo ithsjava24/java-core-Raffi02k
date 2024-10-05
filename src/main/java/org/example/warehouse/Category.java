@@ -8,12 +8,8 @@ public class Category {
 
     // Privat konstruktor
     private Category(String name) {
-        if (name.isEmpty() || name.equals("") || name.equals("null") || name == null) {
-            throw new IllegalArgumentException("Category name can't be null");
-        }
-        String formattedName = name.substring(0, 1).toUpperCase() + name.substring(1);
-
-        this.category = formattedName;
+        // Namnet formateras för att börja med en versal
+        this.category = name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
     // Getter för att hämta namnet på kategorin
@@ -22,21 +18,23 @@ public class Category {
     }
 
     // Statisk metod för att skapa eller återanvända en instans av Category
-    public static Category of (String name) {
+    public static Category of(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Category name can't be null or empty");
+        }
         return new Category(name);
-
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Category category1)) return false;
+        if (!(o instanceof Category)) return false;
+        Category category1 = (Category) o;
         return Objects.equals(category, category1.category);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(category);
+        return Objects.hash(category);
     }
-
 }
