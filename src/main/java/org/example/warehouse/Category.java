@@ -1,9 +1,12 @@
 package org.example.warehouse;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Category {
 
+    private static final Map<String, Category> instances = new HashMap<>(); // Caching av instanser
     private String category;
 
     // Privat konstruktor
@@ -20,9 +23,10 @@ public class Category {
     // Statisk metod för att skapa eller återanvända en instans av Category
     public static Category of(String name) {
         if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Category name can't be null or empty");
+            throw new IllegalArgumentException("Category name can't be null");
         }
-        return new Category(name);
+        // Kolla om en instans med samma namn redan finns
+        return instances.computeIfAbsent(name, Category::new);// Skapa en ny instans om den inte finns
     }
 
     @Override

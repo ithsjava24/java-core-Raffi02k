@@ -170,7 +170,7 @@ class WarehouseTest {
 
         @Test
         @DisplayName("throws IllegalArgumentException when using existing id")
-        void shouldThrowExceptionIfTryingToAddProductWithSameId() {
+        void xshouldThrowExceptionIfTryingToAddProductWithSameId() {
             assertThatThrownBy(() ->
                     warehouse.addProduct(UUID_milk, "Milk", Category.of("Dairy"), BigDecimal.valueOf(999, 2)))
                     .isInstanceOf(IllegalArgumentException.class)

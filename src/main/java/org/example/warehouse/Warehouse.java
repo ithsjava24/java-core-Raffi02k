@@ -1,23 +1,22 @@
 package org.example.warehouse;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Warehouse {
 
     private static Warehouse instance;
     private String name;
-    private List<ProductRecord> products;
+    private BigDecimal price;
+    private List<ProductRecord> products; //Sparar produkter
+    private List<ProductRecord> changedProducts; //Spåra ändrade produkter
 
     // Privat konstruktor för att hindra publika instanser
     private Warehouse(String name) {
         this.name = name; // Sätt lagrets namn
         this.products = new ArrayList<>(); // Initiera produktlistan
-        // Lägg till en standardprodukt om lagret skapas utan produkter
-        addProduct(UUID.randomUUID(), "Default Product", Category.of("Default Category"), BigDecimal.valueOf(0.00));
+        this.changedProducts = new ArrayList<>(); // Initiera ändringslistan
     }
 
     // Statisk metod för att skapa eller returnera en instans av Warehouse med ett namn
@@ -30,7 +29,7 @@ public class Warehouse {
 
     //Metod för att skapa en instans utan namn
     public static Warehouse getInstance() {
-        return getInstance("Default Warehouse");
+        return getInstance("MyStore");
     }
 
     public boolean isEmpty() {
@@ -38,10 +37,12 @@ public class Warehouse {
     }
 
     public List<ProductRecord> getProducts() {
-        return new ArrayList<>(products);
+        return Collections.unmodifiableList(new ArrayList<>(products)); // Returnera en oföränderlig lista
     }
 
     public ProductRecord addProduct(UUID id, String name, Category category, BigDecimal price) {
+
+
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Product name can't be null or empty.");
         }
@@ -51,6 +52,9 @@ public class Warehouse {
         // Om priset är null, sätt det till BigDecimal.ZERO
         if (price == null) {
             price = BigDecimal.ZERO;
+        }
+        if (id == null) {
+            id = UUID.randomUUID(); // Generera ett nytt UUID
         }
 
         // Skapa en lokal variabel för att undvika "Variable used in lambda expression should be final or effectively final"
@@ -65,15 +69,49 @@ public class Warehouse {
         return productRecord; // Returnera den tillagda produkten
     }
 
-    public List<ProductRecord> getProductById(UUID id) {
+    public Optional<ProductRecord> getProductById(UUID id) {
         return products.stream()
                 .filter(product -> product.uuid().equals(id))
-                .collect(Collectors.toList());
+                .findFirst(); // Returnera Optional<ProductRecord>
     }
-
 
     // Getter för att hämta namnet på lagret
     public String getName() {
         return this.name;
     }
+
+    public List<ProductRecord> getProductsBy(Category category) {
+        return products.stream()
+                .filter(product -> product.category().equals(category))
+                .collect(Collectors.toList());
+    }
+
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public void updateProductPrice(UUID id, BigDecimal newPrice) {
+        // Kontrollera om produkten med det angivna ID:t finns
+        ProductRecord productToUpdate = products.stream()
+                .filter(product -> product.uuid().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Product with that id doesn't exist."));
+
+        // Om produkten finns, ändra dess pris
+        productToUpdate.setPrice(newPrice);
+
+        // Lägg till produkten till ändrade produkter
+        changedProducts.add(productToUpdate);
+    }
+
+    public List<ProductRecord> getChangedProducts() {
+        return new ArrayList<>(changedProducts); // Returnera en kopia av ändringslistan
+    }
+
+    public Map<Category, List<ProductRecord>> getProductsGroupedByCategories() {
+        return products.stream()
+                .collect(Collectors.groupingBy(ProductRecord::category));
+    }
+
 }

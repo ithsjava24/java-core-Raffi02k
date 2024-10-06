@@ -5,35 +5,45 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class ProductRecord {
-    private UUID id;
-    private String name;
-    private Category category;
+    private final UUID uuid;
+    private final String name;
+    private final Category category;
     private BigDecimal price;
 
-    public ProductRecord(UUID id, String name, Category category, BigDecimal price) {
-        this.id = id;
+    public ProductRecord(UUID uuid, String name, Category category, BigDecimal price) {
+        this.uuid = uuid;
         this.name = name;
         this.category = category;
         this.price = price;
     }
 
-    public String getName() {
+    public UUID uuid() {
+        return uuid;
+    }
+
+    public String name() {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Category category() {
+        return category;
+    }
+
+    public BigDecimal price() {
         return price;
     }
 
-    public UUID uuid() {
-        return this.id; // Lägg till denna metod om den inte finns
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ProductRecord that)) return false;
-        return Objects.equals(id, that.id) &&
+        if (!(o instanceof ProductRecord)) return false;
+        ProductRecord that = (ProductRecord) o;
+        return Objects.equals(uuid, that.uuid) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(category, that.category) &&
                 Objects.equals(price, that.price);
@@ -41,6 +51,6 @@ public class ProductRecord {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, category, price);
+        return Objects.hash(uuid, name, category, price);
     }
 }
