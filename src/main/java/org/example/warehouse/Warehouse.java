@@ -23,8 +23,13 @@ public class Warehouse {
     public static Warehouse getInstance(String name) {
         if (instance == null) {
             instance = new Warehouse(name);  // Skapa instansen med namnet
-        }
+        } else instance.clearProduct();
         return instance;
+    }
+
+    private void clearProduct() {
+        products.clear();
+        changedProducts.clear();
     }
 
     //Metod för att skapa en instans utan namn
