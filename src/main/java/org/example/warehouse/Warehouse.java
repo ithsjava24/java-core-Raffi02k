@@ -8,7 +8,6 @@ public class Warehouse {
 
     private static Warehouse instance;
     private String name;
-    private BigDecimal price;
     private List<ProductRecord> products; //Sparar produkter
     private List<ProductRecord> changedProducts; //Spåra ändrade produkter
 
@@ -91,10 +90,6 @@ public class Warehouse {
                 .collect(Collectors.toList());
     }
 
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
 
     public void updateProductPrice(UUID id, BigDecimal newPrice) {
         // Kontrollera om produkten med det angivna ID:t finns
