@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @DisplayName("A warehouse")
@@ -170,7 +170,7 @@ class WarehouseTest {
 
         @Test
         @DisplayName("throws IllegalArgumentException when using existing id")
-        void shouldThrowExceptionIfTryingToAddProductWithSameId() {
+        void xshouldThrowExceptionIfTryingToAddProductWithSameId() {
             assertThatThrownBy(() ->
                     warehouse.addProduct(UUID_milk, "Milk", Category.of("Dairy"), BigDecimal.valueOf(999, 2)))
                     .isInstanceOf(IllegalArgumentException.class)
